@@ -2,16 +2,15 @@ import fastify, { FastifyInstance } from "fastify";
 import fastifyCors from '@fastify/cors';
 import fastifyIO from "fastify-socket.io";
 
-import { CONNECTION_COUNT_UPDATED_CHANNEL, CONNECTION_COUNT_KEY, CORS_ORIGIN, PORT } from '../config';
+import { CONNECTION_COUNT_UPDATED_CHANNEL, CONNECTION_COUNT_KEY, CORS_ORIGIN } from '../config';
 import { publisher, subscriber } from "../config/redis";
 
 /**
- * Creates and configures the Fastify app.
+ * Creates and configures the Fastify app with real-time communication capabilities.
  * 
  * @returns {Promise<FastifyInstance>} - The configured Fastify app instance.
  */
 const createFastifyApp = async (): Promise<FastifyInstance> => {
-    // Create a Fastify app instance with logging enabled.
     const app = fastify({ logger: true });
 
     // Register the CORS plugin to enable cross-origin resource sharing.
@@ -59,14 +58,6 @@ const createFastifyApp = async (): Promise<FastifyInstance> => {
                 count: text
             });
         }
-    })
-
-    // Define a health-check endpoint.
-    app.get("/health-check", (_, reply) => {
-        return reply.status(200).send({
-            status: "OK",
-            port: PORT
-        });
     })
 
     return app;
