@@ -1,16 +1,22 @@
 import fastify from "fastify";
 import fastifyCors from '@fastify/cors';
 import fastifyIO from "fastify-socket.io";
+import { Server } from "socket.io";
 
 import { CONNECTION_COUNT_UPDATED_CHANNEL, CONNECTION_COUNT_KEY, CORS_ORIGIN, PORT } from '../config';
 import { publisher, subscriber } from "../config/redis";
+
+declare module "fastify" {
+    interface FastifyInstance {
+        io: Server;
+    }
+}
 
 /**
  * Creates and configures the Fastify app.
  */
 const createFastifyApp = async () => {
-    const app = fastify();
-    const io = app.server;
+    const app = fastify({ logger: true });
     await app.register(fastifyCors, { origin: CORS_ORIGIN });
     await app.register(fastifyIO);
     let currentCount = await publisher.get(CONNECTION_COUNT_KEY);
@@ -18,11 +24,11 @@ const createFastifyApp = async () => {
         // If there is no connection count set, it should be initialized with 0
         await publisher.set(CONNECTION_COUNT_KEY, 0);
     }
-    io.on('connection', async (io) => {
+    app.io.on('connection', async (io) => {
         console.info("Client connected.");
         const incResult = await publisher.incr(CONNECTION_COUNT_KEY);
         await publisher.publish(CONNECTION_COUNT_UPDATED_CHANNEL, String(incResult));
-        io.on("end", async () => {
+        io.on("disconnect", async () => {
             console.info('Client disconnected.');
             const decrResult = await publisher.decr(CONNECTION_COUNT_KEY);
             await publisher.publish(CONNECTION_COUNT_UPDATED_CHANNEL, String(decrResult))
@@ -34,7 +40,7 @@ const createFastifyApp = async () => {
     })
     subscriber.on('message', (channel, text) => {
         if (channel === CONNECTION_COUNT_UPDATED_CHANNEL) {
-            io.emit(CONNECTION_COUNT_UPDATED_CHANNEL, {
+            app.io.emit(CONNECTION_COUNT_UPDATED_CHANNEL, {
                 count: text
             });
         }
