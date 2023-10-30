@@ -11,11 +11,13 @@ if (!REDIS_URL) {
  * A redis publisher
  * ----
  * Set it `rejectUnauthorized` to `true`, if you want to encrypt the data
+ * ```js
  * const publisher = new Redis(REDIS_URL, {
  *  tls: {
  *    rejectUnauthorized: true
  *  }
  * }
+ * ```
  */
 const publisher = new Redis(REDIS_URL);
 
@@ -23,11 +25,13 @@ const publisher = new Redis(REDIS_URL);
  * A redis subscriber
  * ----
  * Set it `rejectUnauthorized` to `true`, if you want to encrypt the data
+ * ```js
  * const subscriber = new Redis(REDIS_URL, {
  *  tls: {
  *    rejectUnauthorized: true
  *  }
  * }
+ * ```
  */
 const subscriber = new Redis(REDIS_URL);
 
