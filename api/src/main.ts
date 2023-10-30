@@ -15,6 +15,12 @@ if (!REDIS_URL) {
 
 const buildServer = () => {
     const app = fastify();
+    app.get("/health-check", (_, reply) => {
+        return reply.status(200).send({
+            status: "OK",
+            port: PORT
+        });
+    })
     return app;
 }
 
