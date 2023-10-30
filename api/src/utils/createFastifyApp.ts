@@ -3,7 +3,7 @@ import fastifyCors from '@fastify/cors';
 import fastifyIO from "fastify-socket.io";
 
 import { CONNECTION_COUND_UPDATED_CHANNEL, CONNECTION_COUNT_KEY, CORS_ORIGIN, PORT } from '../config';
-import { publisher } from "../config/redis";
+import { publisher, subscriber } from "../config/redis";
 
 /**
  * Creates and configures the Fastify app.
@@ -26,6 +26,10 @@ const createFastifyApp = async () => {
             const decrResult = await publisher.decr(CONNECTION_COUNT_KEY);
             await publisher.publish(CONNECTION_COUND_UPDATED_CHANNEL, String(decrResult))
         })
+    })
+    subscriber.subscribe(CONNECTION_COUND_UPDATED_CHANNEL, (err, count) => {
+        if (err) return console.error(`Error subscribing to ${CONNECTION_COUND_UPDATED_CHANNEL}`, err);
+        console.log(`${count} ${count !== 1 ? "clients" : "client"} is connected to ${CONNECTION_COUND_UPDATED_CHANNEL}`)
     })
     app.get("/health-check", (_, reply) => {
         return reply.status(200).send({

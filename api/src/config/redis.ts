@@ -1,4 +1,4 @@
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 
 const REDIS_URL: string | undefined = process.env.REDIS_URL;
 
