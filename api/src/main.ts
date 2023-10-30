@@ -1,5 +1,7 @@
+import fastifyCors from "@fastify/cors";
 import { config } from "dotenv";
 import fastify from "fastify";
+import fastifySocketIO from "fastify-socket.io";
 
 config()
 
@@ -13,8 +15,12 @@ if (!REDIS_URL) {
     process.exit(1);
 }
 
-const buildServer = () => {
+const buildServer = async () => {
     const app = fastify();
+    await app.register(fastifyCors, {
+        origin: CORS_ORIGIN
+    })
+    await app.register(fastifySocketIO)
     app.get("/health-check", (_, reply) => {
         return reply.status(200).send({
             status: "OK",
@@ -25,7 +31,7 @@ const buildServer = () => {
 }
 
 const main = async () => {
-    const app = buildServer();
+    const app = await buildServer();
 
     try {
         await app.listen({ port: PORT, host: HOST });
