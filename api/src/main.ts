@@ -1,9 +1,9 @@
-import createFastifyServer from './utils/createFastifyServer';
+import createFastifyApp from './utils/createFastifyApp';
 import startServer from './utils/startServer';
 
 const main = async () => {
-    const server = await createFastifyServer();
-    await startServer(server);
+    const app = await createFastifyApp();
+    await startServer(app);
 };
 
-main();
+main(); 
