@@ -1,4 +1,5 @@
 import { config } from "dotenv";
+import fastify from "fastify";
 
 config()
 
@@ -12,4 +13,21 @@ if (!REDIS_URL) {
     process.exit(1);
 }
 
-console.log(PORT || REDIS_URL);
+const buildServer = () => {
+    const app = fastify();
+    return app;
+}
+
+const main = async () => {
+    const app = buildServer();
+
+    try {
+        await app.listen({ port: PORT, host: HOST });
+        console.log(`Server started at: http://${HOST}:${PORT}`);
+    } catch (error: unknown) {
+        console.error(error);
+        process.exit(1);
+    }
+}
+
+main();
