@@ -12,7 +12,7 @@ const startServer = async (app: FastifyInstance): Promise<void> => {
         await app.listen({ port: PORT, host: HOST });
         console.log(`Server started at: http://${HOST}:${PORT}`);
     } catch (error) {
-        console.error(error);
+        console.error("Error starting the fastify server: ", error);
         process.exit(1);
     }
 };
