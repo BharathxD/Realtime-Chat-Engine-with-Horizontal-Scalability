@@ -1,0 +1,5 @@
+http://127.0.0.1 {
+    reverse_proxy chat-app-node-1:3001 chat-app-node-2:3001 chat-app-node-3:4001 {
+        header_down Strict-Transport-Security max-age=31536000
+    }
+}
