@@ -31,3 +31,12 @@ services:
       - PORT=5001
       - CORS_ORIGIN=${CORS_ORIGIN}
       - REDIS_URL=${REDIS_URL}
+  caddy:
+    image: caddy/caddy:2.7.3-alpine
+    container_name: caddy-server
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - $PWD/Caddyfile
