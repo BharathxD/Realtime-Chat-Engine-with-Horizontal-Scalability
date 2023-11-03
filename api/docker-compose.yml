@@ -11,3 +11,23 @@ services:
       - PORT=3001
       - CORS_ORIGIN=${CORS_ORIGIN}
       - REDIS_URL=${REDIS_URL}
+  chat-app-node-2:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      "4001:4001"
+    environment:
+      - PORT=4001
+      - CORS_ORIGIN=${CORS_ORIGIN}
+      - REDIS_URL=${REDIS_URL}
+  chat-app-node-3:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      "5001:5001"
+    environment:
+      - PORT=5001
+      - CORS_ORIGIN=${CORS_ORIGIN}
+      - REDIS_URL=${REDIS_URL}
