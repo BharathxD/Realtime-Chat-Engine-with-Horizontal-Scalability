@@ -1,22 +1,24 @@
-import { SOCKET_URL } from "@/lib/constants";
 import { useEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
+import { SOCKET_URL } from "@/lib/constants";
 
-const useSocket = () => {
+/**
+ * useSocket is a custom React hook that establishes and manages a WebSocket connection.
+ * @returns { Socket | null } A Socket.io client socket instance.
+ */
+const useSocket = (): Socket | null => {
     const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
-        const socketIo = io(SOCKET_URL, {
+        const socketClient: Socket = io(SOCKET_URL, {
             reconnection: true,
             upgrade: true,
             transports: ["websocket", "polling"],
         });
 
-        setSocket(socketIo);
+        setSocket(socketClient);
 
-        return function () {
-            socketIo.disconnect();
-        };
+        return () => { socketClient.disconnect() }
     }, []);
 
     return socket;
