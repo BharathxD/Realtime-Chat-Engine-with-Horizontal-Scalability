@@ -2,8 +2,9 @@
 FROM node:18-alpine AS base
 WORKDIR /app
 COPY src ./src
-COPY package*.json /
+COPY package*.json ./
 COPY tsconfig*.json ./
+COPY fastify.d.ts ./
 RUN npm install
 
 # Stage 2 - Build the application
@@ -14,7 +15,8 @@ RUN npm run build
 # Stage 3 - Production
 FROM node:18-alpine
 WORKDIR /app
-COPY package*.json /
+COPY package*.json ./
+COPY fastify.d.ts ./
 RUN npm install --only-production
 COPY --from=build /app/build ./
 

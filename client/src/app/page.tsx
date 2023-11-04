@@ -3,21 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { MESSAGE_TYPE } from "@/lib/constants";
 import { Message } from "@/lib/types";
 import { MessageSchema, MessageType } from "@/lib/validations/message";
 import useSocket from "@/hooks/useSocket";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
 const HomePage = () => {
@@ -41,10 +34,11 @@ const HomePage = () => {
     socket?.emit(MESSAGE_TYPE.NEW_MESSAGE_CHANNEL, {
       message: data.message,
     });
+    form.setValue("message", "");
   };
 
   useEffect(() => {
-    socket?.on("connect", () => console.log("connected to socket"));
+    socket?.on("connect", () => toast.success("Connected to the socket"));
 
     socket?.on(MESSAGE_TYPE.NEW_MESSAGE_CHANNEL, (message: Message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
@@ -57,8 +51,8 @@ const HomePage = () => {
   }, [socket]);
 
   return (
-    <main className="m-auto flex justify-center items-center min-h-screen w-full max-w-3xl flex-col p-4">
-      <div className="justify0-center flex flex-col items-center gap-2">
+    <main className="m-auto flex min-h-screen w-full max-w-3xl flex-col p-4">
+      <div className="justify-center flex flex-col items-center gap-2">
         <h1 className="text-center text-2xl font-semibold">Horizontally Scalable Chat Application</h1>
         <p className="font-semibold text-neutral-500"> ({connectionCount}) Connected Clients</p>
       </div>
@@ -78,14 +72,14 @@ const HomePage = () => {
         <form
           onSubmit={form.handleSubmit(sendMessage)}
           className="flex flex-col items-center justify-center gap-2">
-          <div className="flex flex-row w-full items-start justify-center gap-4 py-2">
+          <div className="flex w-full flex-row items-start justify-center gap-4 py-2">
             <FormField
               control={form.control}
               name="message"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input className="w-full min-w-[400px]" placeholder="Message" {...field} />
+                    <Input className="w-full min-w-[300px] md:min-w-[600px]" placeholder="Message" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -43,7 +43,7 @@ const createFastifyApp = async (): Promise<FastifyInstance> => {
         // Increase the connection count and notify clients.
         const incResult = await publisher.incr(RedisChannels.CONNECTION_COUNT_KEY);
         await publisher.publish(RedisChannels.CONNECTION_COUNT_UPDATED_CHANNEL, String(incResult));
-        ++connectedClients;
+        connectedClients++;
 
         io.on(RedisChannels.NEW_MESSAGE_CHANNEL, async ({ message }) => {
             return await publisher.publish(RedisChannels.NEW_MESSAGE_CHANNEL, message.toString())
@@ -56,7 +56,7 @@ const createFastifyApp = async (): Promise<FastifyInstance> => {
             // Decrease the connection count and notify clients.
             const decrResult = await publisher.decr(RedisChannels.CONNECTION_COUNT_KEY);
             await publisher.publish(RedisChannels.CONNECTION_COUNT_UPDATED_CHANNEL, String(decrResult));
-            --connectedClients;
+            connectedClients++;
         })
     })
 
